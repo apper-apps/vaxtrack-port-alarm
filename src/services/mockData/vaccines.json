@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "vaccineId": "VAX-001",
+    "commercialName": "Pfizer-BioNTech COVID-19",
+    "genericName": "COVID-19 mRNA Vaccine",
+    "vaccineFamily": "COVID-19",
+    "manufacturerId": "PFE-001"
+  },
+  {
+    "Id": 2,
+    "vaccineId": "VAX-002",
+    "commercialName": "Moderna COVID-19",
+    "genericName": "COVID-19 mRNA Vaccine",
+    "vaccineFamily": "COVID-19",
+    "manufacturerId": "MOD-001"
+  },
+  {
+    "Id": 3,
+    "vaccineId": "VAX-003",
+    "commercialName": "Fluzone Quadrivalent",
+    "genericName": "Influenza Vaccine",
+    "vaccineFamily": "Influenza",
+    "manufacturerId": "SAN-001"
+  },
+  {
+    "Id": 4,
+    "vaccineId": "VAX-004",
+    "commercialName": "Prevnar 13",
+    "genericName": "Pneumococcal Vaccine",
+    "vaccineFamily": "Pneumococcal",
+    "manufacturerId": "PFE-002"
+  },
+  {
+    "Id": 5,
+    "vaccineId": "VAX-005",
+    "commercialName": "Tdap Adacel",
+    "genericName": "Tetanus, Diphtheria, Pertussis Vaccine",
+    "vaccineFamily": "Tdap",
+    "manufacturerId": "SAN-002"
+  },
+  {
+    "Id": 6,
+    "vaccineId": "VAX-006",
+    "commercialName": "Shingrix",
+    "genericName": "Zoster Vaccine",
+    "vaccineFamily": "Shingles",
+    "manufacturerId": "GSK-001"
+  },
+  {
+    "Id": 7,
+    "vaccineId": "VAX-007",
+    "commercialName": "Hepatitis B Adult",
+    "genericName": "Hepatitis B Vaccine",
+    "vaccineFamily": "Hepatitis B",
+    "manufacturerId": "MRK-001"
+  },
+  {
+    "Id": 8,
+    "vaccineId": "VAX-008",
+    "commercialName": "MMR II",
+    "genericName": "Measles, Mumps, Rubella Vaccine",
+    "vaccineFamily": "MMR",
+    "manufacturerId": "MRK-002"
+  }
+]

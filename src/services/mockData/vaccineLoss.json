@@ -1,0 +1,32 @@
+[
+  {
+    "Id": 1,
+    "lossId": "LOSS-001",
+    "inventoryId": "INV-004",
+    "lossQuantity": 5,
+    "lossReason": "Expired",
+    "lossDetails": "Vaccines expired before administration",
+    "trainingCompleted": true,
+    "reportDate": "2024-09-16"
+  },
+  {
+    "Id": 2,
+    "lossId": "LOSS-002",
+    "inventoryId": "INV-002",
+    "lossQuantity": 2,
+    "lossReason": "Temperature Excursion",
+    "lossDetails": "Refrigerator malfunction caused temperature rise",
+    "trainingCompleted": true,
+    "reportDate": "2024-09-22"
+  },
+  {
+    "Id": 3,
+    "lossId": "LOSS-003",
+    "inventoryId": "INV-001",
+    "lossQuantity": 1,
+    "lossReason": "Broken Vial",
+    "lossDetails": "Vial accidentally dropped during preparation",
+    "trainingCompleted": true,
+    "reportDate": "2024-09-25"
+  }
+]

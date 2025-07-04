@@ -1,0 +1,32 @@
+[
+  {
+    "Id": 1,
+    "reconciliationId": "REC-001",
+    "inventoryId": "INV-001",
+    "systemQuantity": 75,
+    "physicalQuantity": 75,
+    "adjustmentQuantity": 0,
+    "reconciliationDate": "2024-09-30",
+    "performedBy": "Dr. Sarah Johnson"
+  },
+  {
+    "Id": 2,
+    "reconciliationId": "REC-002",
+    "inventoryId": "INV-002",
+    "systemQuantity": 12,
+    "physicalQuantity": 11,
+    "adjustmentQuantity": -1,
+    "reconciliationDate": "2024-09-30",
+    "performedBy": "Nurse Mike Thompson"
+  },
+  {
+    "Id": 3,
+    "reconciliationId": "REC-003",
+    "inventoryId": "INV-003",
+    "systemQuantity": 180,
+    "physicalQuantity": 180,
+    "adjustmentQuantity": 0,
+    "reconciliationDate": "2024-09-30",
+    "performedBy": "Dr. Emily Chen"
+  }
+]

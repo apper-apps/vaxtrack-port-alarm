@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "administrationId": "ADM-001",
+    "inventoryId": "INV-001",
+    "administeredDoses": 25,
+    "administrationDate": "2024-09-15",
+    "administeredBy": "Dr. Sarah Johnson"
+  },
+  {
+    "Id": 2,
+    "administrationId": "ADM-002",
+    "inventoryId": "INV-002",
+    "administeredDoses": 38,
+    "administrationDate": "2024-09-20",
+    "administeredBy": "Nurse Mike Thompson"
+  },
+  {
+    "Id": 3,
+    "administrationId": "ADM-003",
+    "inventoryId": "INV-003",
+    "administeredDoses": 20,
+    "administrationDate": "2024-09-25",
+    "administeredBy": "Dr. Emily Chen"
+  },
+  {
+    "Id": 4,
+    "administrationId": "ADM-004",
+    "inventoryId": "INV-004",
+    "administeredDoses": 80,
+    "administrationDate": "2024-09-10",
+    "administeredBy": "Nurse Lisa Rodriguez"
+  },
+  {
+    "Id": 5,
+    "administrationId": "ADM-005",
+    "inventoryId": "INV-005",
+    "administeredDoses": 15,
+    "administrationDate": "2024-09-28",
+    "administeredBy": "Dr. James Wilson"
+  }
+]
