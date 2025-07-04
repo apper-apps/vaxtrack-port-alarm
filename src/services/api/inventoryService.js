@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify'
 
 class InventoryService {
-constructor() {
+  constructor() {
     this.tableName = 'inventory'
     this.apperClient = null
   }
