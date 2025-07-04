@@ -120,10 +120,10 @@ case 'quantityOnHand':
     setFilteredInventory(filtered)
   }, [inventory, vaccines, searchTerm, sortField, sortDirection, statusFilter])
   
-  const getStatusInfo = (item) => {
-const expirationDate = new Date(item.expiration_date)
+const getStatusInfo = (item) => {
+    const today = new Date()
+    const expirationDate = new Date(item.expiration_date)
     const daysUntilExpiration = Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24))
-    
     if (daysUntilExpiration <= 0) {
       return { status: 'expired', text: 'Expired' }
     } else if (daysUntilExpiration <= 30) {
