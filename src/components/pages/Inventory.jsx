@@ -20,18 +20,7 @@ const Inventory = () => {
   const [sortField, setSortField] = useState('expirationDate')
   const [sortDirection, setSortDirection] = useState('asc')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   
-  // Advanced filter states
-  const [filters, setFilters] = useState({
-    vaccineFamily: '',
-    vaccineName: '',
-    lotId: '',
-    expirationDateFrom: '',
-    expirationDateTo: '',
-    quantityMin: '',
-    quantityMax: ''
-  })
   const loadData = async () => {
     try {
       setLoading(true)
@@ -56,7 +45,7 @@ const Inventory = () => {
     loadData()
   }, [])
   
-useEffect(() => {
+  useEffect(() => {
     let filtered = [...inventory]
     
     // Apply search filter
@@ -73,57 +62,6 @@ useEffect(() => {
         
         return searchFields.includes(searchTerm.toLowerCase())
       })
-    }
-    
-    // Apply advanced filters
-    if (filters.vaccineFamily) {
-      filtered = filtered.filter(item => {
-        const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
-        return vaccine?.vaccineFamily?.toLowerCase().includes(filters.vaccineFamily.toLowerCase())
-      })
-    }
-    
-    if (filters.vaccineName) {
-      filtered = filtered.filter(item => {
-        const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
-        const nameFields = [
-          vaccine?.commercialName || '',
-          vaccine?.genericName || ''
-        ].join(' ').toLowerCase()
-        return nameFields.includes(filters.vaccineName.toLowerCase())
-      })
-    }
-    
-    if (filters.lotId) {
-      filtered = filtered.filter(item => 
-        item.lotNumber.toLowerCase().includes(filters.lotId.toLowerCase())
-      )
-    }
-    
-    if (filters.expirationDateFrom) {
-      const fromDate = new Date(filters.expirationDateFrom)
-      filtered = filtered.filter(item => 
-        new Date(item.expirationDate) >= fromDate
-      )
-    }
-    
-    if (filters.expirationDateTo) {
-      const toDate = new Date(filters.expirationDateTo)
-      filtered = filtered.filter(item => 
-        new Date(item.expirationDate) <= toDate
-      )
-    }
-    
-    if (filters.quantityMin) {
-      filtered = filtered.filter(item => 
-        item.quantityOnHand >= parseInt(filters.quantityMin)
-      )
-    }
-    
-    if (filters.quantityMax) {
-      filtered = filtered.filter(item => 
-        item.quantityOnHand <= parseInt(filters.quantityMax)
-      )
     }
     
     // Apply status filter
@@ -180,7 +118,7 @@ useEffect(() => {
     })
     
     setFilteredInventory(filtered)
-  }, [inventory, vaccines, searchTerm, sortField, sortDirection, statusFilter, filters])
+  }, [inventory, vaccines, searchTerm, sortField, sortDirection, statusFilter])
   
   const getStatusInfo = (item) => {
     const today = new Date()
@@ -205,42 +143,6 @@ useEffect(() => {
       setSortField(field)
       setSortDirection('asc')
     }
-}
-  
-  const handleFilterChange = (field, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-  
-  const clearAllFilters = () => {
-    setFilters({
-      vaccineFamily: '',
-      vaccineName: '',
-      lotId: '',
-      expirationDateFrom: '',
-      expirationDateTo: '',
-      quantityMin: '',
-      quantityMax: ''
-    })
-    setSearchTerm('')
-    setStatusFilter('all')
-  }
-  
-  const getActiveFilterCount = () => {
-    let count = 0
-    if (searchTerm) count++
-    if (statusFilter !== 'all') count++
-    Object.values(filters).forEach(value => {
-      if (value) count++
-    })
-    return count
-  }
-  
-  const getUniqueVaccineFamilies = () => {
-    const families = vaccines.map(v => v.vaccineFamily).filter(Boolean)
-    return [...new Set(families)].sort()
   }
   
   if (loading) return <Loading type="table" />
@@ -255,7 +157,7 @@ useEffect(() => {
         </div>
       </div>
       
-{/* Filters and Search */}
+      {/* Filters and Search */}
       <div className="card p-6">
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <div className="flex-1">
@@ -263,8 +165,6 @@ useEffect(() => {
               onSearch={setSearchTerm}
               placeholder="Search by vaccine name, lot number, or status..."
               className="w-full"
-              value={searchTerm}
-              onClear={() => setSearchTerm('')}
             />
           </div>
           <div className="flex gap-2">
@@ -281,13 +181,6 @@ useEffect(() => {
             </select>
             <Button
               variant="outline"
-              icon={showAdvancedFilters ? "ChevronUp" : "ChevronDown"}
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            >
-              Advanced Filters {getActiveFilterCount() > 0 && `(${getActiveFilterCount()})`}
-            </Button>
-            <Button
-              variant="outline"
               icon="RefreshCw"
               onClick={loadData}
             >
@@ -295,118 +188,6 @@ useEffect(() => {
             </Button>
           </div>
         </div>
-        
-        {/* Advanced Filters Panel */}
-        {showAdvancedFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-6 pt-6 border-t border-gray-200"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vaccine Family
-                </label>
-                <select
-                  value={filters.vaccineFamily}
-                  onChange={(e) => handleFilterChange('vaccineFamily', e.target.value)}
-                  className="input-field"
-                >
-                  <option value="">All Families</option>
-                  {getUniqueVaccineFamilies().map(family => (
-                    <option key={family} value={family}>{family}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vaccine Name
-                </label>
-                <input
-                  type="text"
-                  value={filters.vaccineName}
-                  onChange={(e) => handleFilterChange('vaccineName', e.target.value)}
-                  placeholder="Filter by vaccine name..."
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Lot ID
-                </label>
-                <input
-                  type="text"
-                  value={filters.lotId}
-                  onChange={(e) => handleFilterChange('lotId', e.target.value)}
-                  placeholder="Filter by lot ID..."
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Expiration Date From
-                </label>
-                <input
-                  type="date"
-                  value={filters.expirationDateFrom}
-                  onChange={(e) => handleFilterChange('expirationDateFrom', e.target.value)}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Expiration Date To
-                </label>
-                <input
-                  type="date"
-                  value={filters.expirationDateTo}
-                  onChange={(e) => handleFilterChange('expirationDateTo', e.target.value)}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quantity Range
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={filters.quantityMin}
-                    onChange={(e) => handleFilterChange('quantityMin', e.target.value)}
-                    placeholder="Min"
-                    className="input-field flex-1"
-                    min="0"
-                  />
-                  <input
-                    type="number"
-                    value={filters.quantityMax}
-                    onChange={(e) => handleFilterChange('quantityMax', e.target.value)}
-                    placeholder="Max"
-                    className="input-field flex-1"
-                    min="0"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-end mt-4">
-              <Button
-                variant="outline"
-                icon="X"
-                onClick={clearAllFilters}
-              >
-                Clear All Filters
-              </Button>
-            </div>
-          </motion.div>
-        )}
       </div>
       
       {/* Inventory Table */}
