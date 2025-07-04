@@ -34,8 +34,8 @@ const Reconciliation = () => {
       
       // Initialize physical counts with current system quantities
       const initialCounts = {}
-      inventoryData.forEach(item => {
-        initialCounts[item.Id] = item.quantityOnHand
+inventoryData.forEach(item => {
+        initialCounts[item.Id] = item.quantity_on_hand
       })
       setPhysicalCounts(initialCounts)
       
@@ -66,8 +66,8 @@ const Reconciliation = () => {
   
   const getAdjustment = (inventoryId) => {
     const item = inventory.find(i => i.Id === inventoryId)
-    const physicalCount = physicalCounts[inventoryId] || 0
-    return physicalCount - item.quantityOnHand
+const physicalCount = physicalCounts[inventoryId] || 0
+    return physicalCount - item.quantity_on_hand
   }
   
   const getTotalAdjustments = () => {
@@ -99,18 +99,20 @@ const Reconciliation = () => {
       for (const item of discrepancies) {
         const adjustment = getAdjustment(item.Id)
         
-        await reconciliationService.create({
-          inventoryId: item.inventoryId,
-          systemQuantity: item.quantityOnHand,
-          physicalQuantity: physicalCounts[item.Id],
-          adjustmentQuantity: adjustment,
-          reconciliationDate: new Date().toISOString().split('T')[0],
-          performedBy: 'Healthcare Admin'
+await reconciliationService.create({
+          Name: `REC-${Date.now()}-${item.Id}`,
+          reconciliation_id: `REC-${Date.now()}-${item.Id}`,
+          inventory_id: item.inventory_id,
+          system_quantity: item.quantity_on_hand,
+          physical_quantity: physicalCounts[item.Id],
+adjustment_quantity: adjustment,
+          reconciliation_date: new Date().toISOString().split('T')[0],
+          performed_by: 'Healthcare Admin'
         })
         
         // Update inventory quantities
-        await inventoryService.update(item.Id, {
-          quantityOnHand: physicalCounts[item.Id]
+await inventoryService.update(item.Id, {
+          quantity_on_hand: physicalCounts[item.Id]
         })
       }
       
@@ -128,14 +130,14 @@ const Reconciliation = () => {
   
   const getStatusInfo = (item) => {
     const today = new Date()
-    const expirationDate = new Date(item.expirationDate)
+const expirationDate = new Date(item.expiration_date)
     const daysUntilExpiration = Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24))
     
     if (daysUntilExpiration <= 0) {
       return { status: 'expired', text: 'Expired' }
     } else if (daysUntilExpiration <= 30) {
       return { status: 'expiring', text: `Expires in ${daysUntilExpiration} days` }
-    } else if (item.quantityOnHand <= 20) {
+} else if (item.quantity_on_hand <= 20) {
       return { status: 'low-stock', text: 'Low Stock' }
     } else {
       return { status: 'good', text: 'Good' }
@@ -245,7 +247,7 @@ const Reconciliation = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {inventory.map((item, index) => {
-                  const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
                   const statusInfo = getStatusInfo(item)
                   const adjustment = getAdjustment(item.Id)
                   
@@ -261,16 +263,16 @@ const Reconciliation = () => {
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {vaccine?.commercialName || 'Unknown'}
+<div className="text-sm font-medium text-gray-900">
+                            {vaccine?.commercial_name || 'Unknown'}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {vaccine?.genericName || 'Unknown'}
+<div className="text-sm text-gray-500">
+                            {vaccine?.generic_name || 'Unknown'}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.lotNumber}
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.lot_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <StatusBadge status={statusInfo.status}>
@@ -278,8 +280,8 @@ const Reconciliation = () => {
                         </StatusBadge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {item.quantityOnHand}
+<div className="text-sm font-medium text-gray-900">
+                          {item.quantity_on_hand}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

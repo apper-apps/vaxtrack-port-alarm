@@ -44,12 +44,12 @@ const Reports = () => {
           ])
           data = {
             title: 'Current Inventory Report',
-            items: inventory.map(item => {
-              const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+items: inventory.map(item => {
+              const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
               return {
                 ...item,
-                vaccineName: vaccine?.commercialName || 'Unknown',
-                genericName: vaccine?.genericName || 'Unknown'
+                vaccineName: vaccine?.commercial_name || 'Unknown',
+                genericName: vaccine?.generic_name || 'Unknown'
               }
             })
           }
@@ -63,12 +63,12 @@ const Reports = () => {
           ])
           data = {
             title: 'Expiring Vaccines Report (Next 30 Days)',
-            items: expiring.map(item => {
-              const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+items: expiring.map(item => {
+              const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
               return {
                 ...item,
-                vaccineName: vaccine?.commercialName || 'Unknown',
-                genericName: vaccine?.genericName || 'Unknown'
+                vaccineName: vaccine?.commercial_name || 'Unknown',
+                genericName: vaccine?.generic_name || 'Unknown'
               }
             })
           }
@@ -82,12 +82,12 @@ const Reports = () => {
           ])
           data = {
             title: 'Expired Vaccines Report',
-            items: expired.map(item => {
-              const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+items: expired.map(item => {
+              const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
               return {
                 ...item,
-                vaccineName: vaccine?.commercialName || 'Unknown',
-                genericName: vaccine?.genericName || 'Unknown'
+                vaccineName: vaccine?.commercial_name || 'Unknown',
+                genericName: vaccine?.generic_name || 'Unknown'
               }
             })
           }
@@ -101,12 +101,12 @@ const Reports = () => {
           ])
           data = {
             title: 'Low Stock Report',
-            items: lowStock.map(item => {
-              const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+items: lowStock.map(item => {
+              const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
               return {
                 ...item,
-                vaccineName: vaccine?.commercialName || 'Unknown',
-                genericName: vaccine?.genericName || 'Unknown'
+                vaccineName: vaccine?.commercial_name || 'Unknown',
+                genericName: vaccine?.generic_name || 'Unknown'
               }
             })
           }
@@ -117,8 +117,8 @@ const Reports = () => {
           const administrations = await administrationService.getAll()
           data = {
             title: 'Administration Summary Report',
-            items: administrations,
-            totalDoses: administrations.reduce((sum, admin) => sum + admin.administeredDoses, 0)
+items: administrations,
+            totalDoses: administrations.reduce((sum, admin) => sum + admin.administered_doses, 0)
           }
           break
         }
@@ -127,8 +127,8 @@ const Reports = () => {
           const losses = await vaccineLossService.getAll()
           data = {
             title: 'Vaccine Loss Report',
-            items: losses,
-            totalLoss: losses.reduce((sum, loss) => sum + loss.lossQuantity, 0)
+items: losses,
+            totalLoss: losses.reduce((sum, loss) => sum + loss.loss_quantity, 0)
           }
           break
         }
