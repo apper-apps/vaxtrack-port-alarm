@@ -21,7 +21,15 @@ class InventoryService {
   }
   
   async getAll() {
-    try {
+try {
+      // Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         fields: [
           { field: { Name: "Name" } },
@@ -59,7 +67,15 @@ class InventoryService {
   }
   
   async getById(id) {
-    try {
+try {
+      // Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         fields: [
           { field: { Name: "Name" } },
@@ -97,7 +113,15 @@ class InventoryService {
   }
   
   async create(inventoryData) {
-    try {
+try {
+      // Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         records: [{
           Name: inventoryData.Name || inventoryData.inventory_id,
@@ -151,6 +175,14 @@ class InventoryService {
   
   async update(id, inventoryData) {
     try {
+// Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         records: [{
           Id: parseInt(id),
@@ -170,7 +202,6 @@ class InventoryService {
       }
       
       const response = await this.apperClient.updateRecord(this.tableName, params)
-      
       if (!response.success) {
         console.error(response.message)
         toast.error(response.message)
@@ -205,12 +236,19 @@ class InventoryService {
   
   async delete(id) {
     try {
+// Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         RecordIds: [parseInt(id)]
       }
       
       const response = await this.apperClient.deleteRecord(this.tableName, params)
-      
       if (!response.success) {
         console.error(response.message)
         toast.error(response.message)
@@ -242,6 +280,14 @@ class InventoryService {
   
   async getExpiringVaccines(days = 30) {
     try {
+// Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const today = new Date()
       const cutoffDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000)
       
@@ -273,7 +319,6 @@ class InventoryService {
       }
       
       const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
       if (!response.success) {
         console.error(response.message)
         return []
@@ -287,7 +332,15 @@ class InventoryService {
   }
   
   async getExpiredVaccines() {
-    try {
+try {
+      // Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const today = new Date()
       
       const params = {
@@ -313,7 +366,6 @@ class InventoryService {
       }
       
       const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
       if (!response.success) {
         console.error(response.message)
         return []
@@ -327,7 +379,15 @@ class InventoryService {
   }
   
   async getLowStockVaccines(threshold = 20) {
-    try {
+try {
+      // Initialize ApperClient
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+      this.tableName = 'inventory';
+      
       const params = {
         fields: [
           { field: { Name: "Name" } },
@@ -356,7 +416,6 @@ class InventoryService {
       }
       
       const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
       if (!response.success) {
         console.error(response.message)
         return []
