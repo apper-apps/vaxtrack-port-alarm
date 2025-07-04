@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react'
-import { toast } from 'react-toastify'
-import { motion } from 'framer-motion'
-import inventoryService from '@/services/api/inventoryService'
-import vaccineService from '@/services/api/vaccineService'
-import administrationService from '@/services/api/administrationService'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import Loading from '@/components/ui/Loading'
-import Error from '@/components/ui/Error'
-import Empty from '@/components/ui/Empty'
-import StatusBadge from '@/components/atoms/StatusBadge'
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import StatusBadge from "@/components/atoms/StatusBadge";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import vaccineService from "@/services/api/vaccineService";
+import inventoryService from "@/services/api/inventoryService";
+import administrationService from "@/services/api/administrationService";
 
 const RecordAdministration = () => {
   const [inventory, setInventory] = useState([])
@@ -30,8 +30,7 @@ const RecordAdministration = () => {
       ])
       
       // Only show inventory with quantities > 0
-      const availableInventory = inventoryData.filter(item => item.quantityOnHand > 0)
-      
+const availableInventory = inventoryData.filter(item => item.quantity_on_hand > 0)
       setInventory(availableInventory)
       setVaccines(vaccineData)
       
@@ -57,8 +56,8 @@ const RecordAdministration = () => {
     const numValue = parseInt(value) || 0
     const item = inventory.find(i => i.Id === inventoryId)
     
-    if (numValue > item.quantityOnHand) {
-      toast.error(`Cannot administer more than ${item.quantityOnHand} doses available`)
+if (numValue > item.quantity_on_hand) {
+      toast.error(`Cannot administer more than ${item.quantity_on_hand} doses available`)
       return
     }
     
@@ -74,11 +73,13 @@ const RecordAdministration = () => {
       
       const administrationEntries = Object.entries(administrationData)
         .filter(([_, doses]) => doses > 0)
-        .map(([inventoryId, doses]) => ({
-          inventoryId: `INV-${inventoryId}`,
-          administeredDoses: doses,
-          administrationDate: new Date().toISOString().split('T')[0],
-          administeredBy: 'Healthcare Admin'
+.map(([inventoryId, doses]) => ({
+          Name: `ADM-${Date.now()}-${inventoryId}`,
+          administration_id: `ADM-${Date.now()}-${inventoryId}`,
+          inventory_id: inventoryId,
+administered_doses: doses,
+          administration_date: new Date().toISOString().split('T')[0],
+          administered_by: 'Healthcare Admin'
         }))
       
       if (administrationEntries.length === 0) {
@@ -93,12 +94,11 @@ const RecordAdministration = () => {
       
       // Update inventory quantities
       for (const [inventoryId, doses] of Object.entries(administrationData)) {
-        if (doses > 0) {
+if (doses > 0) {
           const item = inventory.find(i => i.Id === parseInt(inventoryId))
-          const newQuantity = item.quantityOnHand - doses
-          
-          await inventoryService.update(parseInt(inventoryId), {
-            quantityOnHand: newQuantity
+          const newQuantity = item.quantity_on_hand - doses
+await inventoryService.update(parseInt(inventoryId), {
+            quantity_on_hand: newQuantity
           })
         }
       }
@@ -119,17 +119,16 @@ const RecordAdministration = () => {
   const getTotalDoses = () => {
     return Object.values(administrationData).reduce((sum, doses) => sum + doses, 0)
   }
-  
-  const getStatusInfo = (item) => {
+const getStatusInfo = (item) => {
+    const expirationDate = new Date(item.expiration_date)
     const today = new Date()
-    const expirationDate = new Date(item.expirationDate)
     const daysUntilExpiration = Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24))
     
     if (daysUntilExpiration <= 0) {
       return { status: 'expired', text: 'Expired' }
     } else if (daysUntilExpiration <= 30) {
       return { status: 'expiring', text: `Expires in ${daysUntilExpiration} days` }
-    } else if (item.quantityOnHand <= 20) {
+} else if (item.quantity_on_hand <= 20) {
       return { status: 'low-stock', text: 'Low Stock' }
     } else {
       return { status: 'good', text: 'Good' }
@@ -201,7 +200,7 @@ const RecordAdministration = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {inventory.map((item, index) => {
-                  const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
+const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
                   const statusInfo = getStatusInfo(item)
                   
                   return (
@@ -213,23 +212,23 @@ const RecordAdministration = () => {
                       className="hover:bg-gray-50 transition-colors duration-150"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {vaccine?.commercialName || 'Unknown'}
+<div className="text-sm font-medium text-gray-900">
+                          {vaccine?.commercial_name || 'Unknown'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {vaccine?.genericName || 'Unknown'}
+<div className="text-sm text-gray-900">
+                          {vaccine?.generic_name || 'Unknown'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.lotNumber}
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.lot_number}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(item.expirationDate).toLocaleDateString()}
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {new Date(item.expiration_date).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.quantityOnHand}
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.quantity_on_hand}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <StatusBadge status={statusInfo.status}>
@@ -239,8 +238,8 @@ const RecordAdministration = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Input
                           type="number"
-                          min="0"
-                          max={item.quantityOnHand}
+min="0"
+                          max={item.quantity_on_hand}
                           value={administrationData[item.Id] || ''}
                           onChange={(e) => handleAdministrationChange(item.Id, e.target.value)}
                           className="w-20"

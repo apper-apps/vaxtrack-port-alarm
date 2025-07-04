@@ -1,113 +1,362 @@
-import inventoryData from '@/services/mockData/inventory.json'
+import { toast } from 'react-toastify'
 
 class InventoryService {
   constructor() {
-    this.inventory = [...inventoryData]
+    const { ApperClient } = window.ApperSDK
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    this.tableName = 'inventory'
   }
   
   async getAll() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([...this.inventory])
-      }, 300)
-    })
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "inventory_id" } },
+          { field: { Name: "lot_number" } },
+          { field: { Name: "expiration_date" } },
+          { field: { Name: "received_date" } },
+          { field: { Name: "quantity_received" } },
+          { field: { Name: "quantity_on_hand" } },
+          { field: { Name: "passing_inspection" } },
+          { field: { Name: "failed_inspection" } },
+          { field: { Name: "discrepancy_reason" } },
+          { field: { Name: "status" } },
+          { 
+            field: { Name: "vaccine_id" },
+            referenceField: { field: { Name: "Name" } }
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching inventory:', error)
+      toast.error('Failed to fetch inventory')
+      return []
+    }
   }
   
   async getById(id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const item = this.inventory.find(i => i.Id === parseInt(id))
-        if (item) {
-          resolve({ ...item })
-        } else {
-          reject(new Error('Inventory item not found'))
-        }
-      }, 200)
-    })
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "inventory_id" } },
+          { field: { Name: "lot_number" } },
+          { field: { Name: "expiration_date" } },
+          { field: { Name: "received_date" } },
+          { field: { Name: "quantity_received" } },
+          { field: { Name: "quantity_on_hand" } },
+          { field: { Name: "passing_inspection" } },
+          { field: { Name: "failed_inspection" } },
+          { field: { Name: "discrepancy_reason" } },
+          { field: { Name: "status" } },
+          { 
+            field: { Name: "vaccine_id" },
+            referenceField: { field: { Name: "Name" } }
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.getRecordById(this.tableName, parseInt(id), params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return null
+      }
+      
+      return response.data
+    } catch (error) {
+      console.error(`Error fetching inventory with ID ${id}:`, error)
+      toast.error('Failed to fetch inventory item')
+      return null
+    }
   }
   
   async create(inventoryData) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newItem = {
-          ...inventoryData,
-          Id: Math.max(...this.inventory.map(i => i.Id)) + 1
+    try {
+      const params = {
+        records: [{
+          Name: inventoryData.Name || inventoryData.inventory_id,
+          inventory_id: inventoryData.inventory_id,
+          lot_number: inventoryData.lot_number,
+          expiration_date: inventoryData.expiration_date,
+          received_date: inventoryData.received_date,
+          quantity_received: inventoryData.quantity_received,
+          quantity_on_hand: inventoryData.quantity_on_hand,
+          passing_inspection: inventoryData.passing_inspection,
+          failed_inspection: inventoryData.failed_inspection,
+          discrepancy_reason: inventoryData.discrepancy_reason,
+          status: inventoryData.status,
+          vaccine_id: inventoryData.vaccine_id
+        }]
+      }
+      
+      const response = await this.apperClient.createRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return null
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`)
+            })
+            if (record.message) toast.error(record.message)
+          })
         }
-        this.inventory.push(newItem)
-        resolve({ ...newItem })
-      }, 400)
-    })
+        
+        return successfulRecords.length > 0 ? successfulRecords[0].data : null
+      }
+      
+      return null
+    } catch (error) {
+      console.error('Error creating inventory:', error)
+      toast.error('Failed to create inventory item')
+      return null
+    }
   }
   
   async update(id, inventoryData) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.inventory.findIndex(i => i.Id === parseInt(id))
-        if (index !== -1) {
-          this.inventory[index] = { ...this.inventory[index], ...inventoryData }
-          resolve({ ...this.inventory[index] })
-        } else {
-          reject(new Error('Inventory item not found'))
+    try {
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: inventoryData.Name || inventoryData.inventory_id,
+          inventory_id: inventoryData.inventory_id,
+          lot_number: inventoryData.lot_number,
+          expiration_date: inventoryData.expiration_date,
+          received_date: inventoryData.received_date,
+          quantity_received: inventoryData.quantity_received,
+          quantity_on_hand: inventoryData.quantity_on_hand,
+          passing_inspection: inventoryData.passing_inspection,
+          failed_inspection: inventoryData.failed_inspection,
+          discrepancy_reason: inventoryData.discrepancy_reason,
+          status: inventoryData.status,
+          vaccine_id: inventoryData.vaccine_id
+        }]
+      }
+      
+      const response = await this.apperClient.updateRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return null
+      }
+      
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success)
+        const failedUpdates = response.results.filter(result => !result.success)
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`)
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`)
+            })
+            if (record.message) toast.error(record.message)
+          })
         }
-      }, 300)
-    })
+        
+        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null
+      }
+      
+      return null
+    } catch (error) {
+      console.error('Error updating inventory:', error)
+      toast.error('Failed to update inventory item')
+      return null
+    }
   }
   
   async delete(id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.inventory.findIndex(i => i.Id === parseInt(id))
-        if (index !== -1) {
-          const deletedItem = this.inventory.splice(index, 1)[0]
-          resolve({ ...deletedItem })
-        } else {
-          reject(new Error('Inventory item not found'))
+    try {
+      const params = {
+        RecordIds: [parseInt(id)]
+      }
+      
+      const response = await this.apperClient.deleteRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return false
+      }
+      
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success)
+        const failedDeletions = response.results.filter(result => !result.success)
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
+          
+          failedDeletions.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
         }
-      }, 300)
-    })
+        
+        return successfulDeletions.length > 0
+      }
+      
+      return false
+    } catch (error) {
+      console.error('Error deleting inventory:', error)
+      toast.error('Failed to delete inventory item')
+      return false
+    }
   }
   
   async getExpiringVaccines(days = 30) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const today = new Date()
-        const cutoffDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000)
-        
-        const expiring = this.inventory.filter(item => {
-          const expirationDate = new Date(item.expirationDate)
-          return expirationDate <= cutoffDate && expirationDate > today
-        })
-        
-        resolve([...expiring])
-      }, 200)
-    })
+    try {
+      const today = new Date()
+      const cutoffDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000)
+      
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "inventory_id" } },
+          { field: { Name: "lot_number" } },
+          { field: { Name: "expiration_date" } },
+          { field: { Name: "quantity_on_hand" } },
+          { field: { Name: "status" } },
+          { 
+            field: { Name: "vaccine_id" },
+            referenceField: { field: { Name: "Name" } }
+          }
+        ],
+        where: [
+          {
+            FieldName: "expiration_date",
+            Operator: "LessThanOrEqualTo",
+            Values: [cutoffDate.toISOString().split('T')[0]]
+          },
+          {
+            FieldName: "expiration_date",
+            Operator: "GreaterThan",
+            Values: [today.toISOString().split('T')[0]]
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching expiring vaccines:', error)
+      return []
+    }
   }
   
   async getExpiredVaccines() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const today = new Date()
-        
-        const expired = this.inventory.filter(item => {
-          const expirationDate = new Date(item.expirationDate)
-          return expirationDate <= today
-        })
-        
-        resolve([...expired])
-      }, 200)
-    })
+    try {
+      const today = new Date()
+      
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "inventory_id" } },
+          { field: { Name: "lot_number" } },
+          { field: { Name: "expiration_date" } },
+          { field: { Name: "quantity_on_hand" } },
+          { field: { Name: "status" } },
+          { 
+            field: { Name: "vaccine_id" },
+            referenceField: { field: { Name: "Name" } }
+          }
+        ],
+        where: [
+          {
+            FieldName: "expiration_date",
+            Operator: "LessThanOrEqualTo",
+            Values: [today.toISOString().split('T')[0]]
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching expired vaccines:', error)
+      return []
+    }
   }
   
   async getLowStockVaccines(threshold = 20) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const lowStock = this.inventory.filter(item => 
-          item.quantityOnHand <= threshold && item.quantityOnHand > 0
-        )
-        
-        resolve([...lowStock])
-      }, 200)
-    })
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "inventory_id" } },
+          { field: { Name: "lot_number" } },
+          { field: { Name: "expiration_date" } },
+          { field: { Name: "quantity_on_hand" } },
+          { field: { Name: "status" } },
+          { 
+            field: { Name: "vaccine_id" },
+            referenceField: { field: { Name: "Name" } }
+          }
+        ],
+        where: [
+          {
+            FieldName: "quantity_on_hand",
+            Operator: "LessThanOrEqualTo",
+            Values: [threshold]
+          },
+          {
+            FieldName: "quantity_on_hand",
+            Operator: "GreaterThan",
+            Values: [0]
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+      
+      return response.data || []
+    } catch (error) {
+      console.error('Error fetching low stock vaccines:', error)
+      return []
+    }
   }
 }
 
