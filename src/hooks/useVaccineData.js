@@ -71,7 +71,7 @@ export const useDashboardMetrics = () => {
         inventoryService.getLowStockVaccines(20)
       ])
       
-const totalDoses = inventory.reduce((sum, item) => sum + item.quantity_on_hand, 0)
+      const totalDoses = inventory.reduce((sum, item) => sum + item.quantityOnHand, 0)
       
       setMetrics({
         totalDoses,

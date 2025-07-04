@@ -87,22 +87,22 @@ const ReceiveVaccines = () => {
     try {
       setLoading(true)
       
-const inventoryData = {
-        Name: `INV-${Date.now()}`,
-        inventory_id: `INV-${Date.now()}`,
-        vaccine_id: formData.vaccineId,
-        lot_number: formData.lotNumber,
-        expiration_date: formData.expirationDate,
-        received_date: new Date().toISOString().split('T')[0],
-        quantity_received: parseInt(formData.quantityReceived),
-        quantity_on_hand: parseInt(formData.passingInspection), // Only passing inspection goes to inventory
-        passing_inspection: parseInt(formData.passingInspection),
-        failed_inspection: parseInt(formData.failedInspection),
-        discrepancy_reason: formData.discrepancyReason,
+      const inventoryData = {
+        inventoryId: `INV-${Date.now()}`,
+        vaccineId: formData.vaccineId,
+        lotNumber: formData.lotNumber,
+        expirationDate: formData.expirationDate,
+        receivedDate: new Date().toISOString().split('T')[0],
+        quantityReceived: parseInt(formData.quantityReceived),
+        quantityOnHand: parseInt(formData.passingInspection), // Only passing inspection goes to inventory
+        passingInspection: parseInt(formData.passingInspection),
+        failedInspection: parseInt(formData.failedInspection),
+        discrepancyReason: formData.discrepancyReason,
         status: 'Good'
       }
       
       await inventoryService.create(inventoryData)
+      
       toast.success('Vaccine shipment received successfully!')
       
       // Reset form

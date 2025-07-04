@@ -79,9 +79,9 @@ const LossReporting = () => {
     
     // Validate loss quantity doesn't exceed available quantity
     if (formData.inventoryId && formData.lossQuantity) {
-const selectedItem = inventory.find(item => item.Id === parseInt(formData.inventoryId))
-      if (selectedItem && parseInt(formData.lossQuantity) > selectedItem.quantity_on_hand) {
-        newErrors.lossQuantity = `Cannot exceed available quantity (${selectedItem.quantity_on_hand})`
+      const selectedItem = inventory.find(item => item.Id === parseInt(formData.inventoryId))
+      if (selectedItem && parseInt(formData.lossQuantity) > selectedItem.quantityOnHand) {
+        newErrors.lossQuantity = `Cannot exceed available quantity (${selectedItem.quantityOnHand})`
       }
     }
     
@@ -103,21 +103,19 @@ const selectedItem = inventory.find(item => item.Id === parseInt(formData.invent
       const selectedItem = inventory.find(item => item.Id === parseInt(formData.inventoryId))
       
       // Create loss record
-await vaccineLossService.create({
-        Name: `LOSS-${Date.now()}`,
-        loss_id: `LOSS-${Date.now()}`,
-        inventory_id: selectedItem.inventory_id,
-        loss_quantity: parseInt(formData.lossQuantity),
-loss_reason: formData.lossReason,
-        loss_details: formData.lossDetails,
-        training_completed: formData.trainingCompleted,
-        report_date: new Date().toISOString().split('T')[0]
+      await vaccineLossService.create({
+        inventoryId: selectedItem.inventoryId,
+        lossQuantity: parseInt(formData.lossQuantity),
+        lossReason: formData.lossReason,
+        lossDetails: formData.lossDetails,
+        trainingCompleted: formData.trainingCompleted,
+        reportDate: new Date().toISOString().split('T')[0]
       })
       
-// Update inventory quantity
-      const newQuantity = selectedItem.quantity_on_hand - parseInt(formData.lossQuantity)
+      // Update inventory quantity
+      const newQuantity = selectedItem.quantityOnHand - parseInt(formData.lossQuantity)
       await inventoryService.update(selectedItem.Id, {
-        quantity_on_hand: newQuantity
+        quantityOnHand: newQuantity
       })
       
       toast.success('Vaccine loss reported successfully!')
@@ -142,19 +140,19 @@ loss_reason: formData.lossReason,
   }
   
   const getInventoryOptions = () => {
-return inventory.map(item => {
-      const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
+    return inventory.map(item => {
+      const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
       return {
         value: item.Id.toString(),
-        label: `${vaccine?.commercial_name || 'Unknown'} - Lot: ${item.lot_number} (${item.quantity_on_hand} available)`
+        label: `${vaccine?.commercialName || 'Unknown'} - Lot: ${item.lotNumber} (${item.quantityOnHand} available)`
       }
     })
   }
   
   const getSelectedItemQuantity = () => {
     if (!formData.inventoryId) return 0
-const selectedItem = inventory.find(item => item.Id === parseInt(formData.inventoryId))
-    return selectedItem ? selectedItem.quantity_on_hand : 0
+    const selectedItem = inventory.find(item => item.Id === parseInt(formData.inventoryId))
+    return selectedItem ? selectedItem.quantityOnHand : 0
   }
   
   if (loading) return <Loading />
