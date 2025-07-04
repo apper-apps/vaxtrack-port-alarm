@@ -2,65 +2,153 @@
   {
     "Id": 1,
     "vaccineId": "VAX-001",
-    "commercialName": "Pfizer-BioNTech COVID-19",
-    "genericName": "COVID-19 mRNA Vaccine",
-    "vaccineFamily": "COVID-19",
-    "manufacturerId": "PFE-001"
+    "commercialName": "Daptacel SDV",
+    "genericName": "DTaP",
+    "vaccineFamily": "DTaP",
+    "manufacturerId": "SAN-001"
   },
   {
     "Id": 2,
     "vaccineId": "VAX-002",
-    "commercialName": "Moderna COVID-19",
-    "genericName": "COVID-19 mRNA Vaccine",
-    "vaccineFamily": "COVID-19",
-    "manufacturerId": "MOD-001"
+    "commercialName": "Quadracel PFS",
+    "genericName": "DTaP-IPV",
+    "vaccineFamily": "DTaP-IPV",
+    "manufacturerId": "SAN-002"
   },
   {
     "Id": 3,
     "vaccineId": "VAX-003",
-    "commercialName": "Fluzone Quadrivalent",
-    "genericName": "Influenza Vaccine",
-    "vaccineFamily": "Influenza",
-    "manufacturerId": "SAN-001"
+    "commercialName": "IPOL MDV",
+    "genericName": "IPV",
+    "vaccineFamily": "IPV",
+    "manufacturerId": "SAN-003"
   },
   {
     "Id": 4,
     "vaccineId": "VAX-004",
-    "commercialName": "Prevnar 13",
-    "genericName": "Pneumococcal Vaccine",
-    "vaccineFamily": "Pneumococcal",
-    "manufacturerId": "PFE-002"
+    "commercialName": "Engerix-B PFS",
+    "genericName": "Hep B",
+    "vaccineFamily": "Hepatitis B",
+    "manufacturerId": "GSK-001"
   },
   {
     "Id": 5,
     "vaccineId": "VAX-005",
-    "commercialName": "Tdap Adacel",
-    "genericName": "Tetanus, Diphtheria, Pertussis Vaccine",
-    "vaccineFamily": "Tdap",
-    "manufacturerId": "SAN-002"
+    "commercialName": "Beyfortus 100mg PFS",
+    "genericName": "RSV",
+    "vaccineFamily": "RSV",
+    "manufacturerId": "SAN-004"
   },
   {
     "Id": 6,
     "vaccineId": "VAX-006",
-    "commercialName": "Shingrix",
-    "genericName": "Zoster Vaccine",
-    "vaccineFamily": "Shingles",
-    "manufacturerId": "GSK-001"
+    "commercialName": "Beyfortus 50mg PFS",
+    "genericName": "RSV",
+    "vaccineFamily": "RSV",
+    "manufacturerId": "SAN-005"
   },
   {
     "Id": 7,
     "vaccineId": "VAX-007",
-    "commercialName": "Hepatitis B Adult",
-    "genericName": "Hepatitis B Vaccine",
-    "vaccineFamily": "Hepatitis B",
+    "commercialName": "MMR II SDV",
+    "genericName": "MMR",
+    "vaccineFamily": "MMR",
     "manufacturerId": "MRK-001"
   },
   {
     "Id": 8,
     "vaccineId": "VAX-008",
-    "commercialName": "MMR II",
-    "genericName": "Measles, Mumps, Rubella Vaccine",
-    "vaccineFamily": "MMR",
+    "commercialName": "ActHib SDV",
+    "genericName": "Hib",
+    "vaccineFamily": "Hib",
+    "manufacturerId": "SAN-006"
+  },
+  {
+    "Id": 9,
+    "vaccineId": "VAX-009",
+    "commercialName": "Adacel PFS",
+    "genericName": "Tdap",
+    "vaccineFamily": "Tdap",
+    "manufacturerId": "SAN-007"
+  },
+  {
+    "Id": 10,
+    "vaccineId": "VAX-010",
+    "commercialName": "Varivax SDV",
+    "genericName": "Varicella",
+    "vaccineFamily": "Varicella",
     "manufacturerId": "MRK-002"
+  },
+  {
+    "Id": 11,
+    "vaccineId": "VAX-011",
+    "commercialName": "MenQuadFi SDV",
+    "genericName": "MCV4",
+    "vaccineFamily": "Meningococcal",
+    "manufacturerId": "SAN-008"
+  },
+  {
+    "Id": 12,
+    "vaccineId": "VAX-012",
+    "commercialName": "Bexsero PFS",
+    "genericName": "MenB",
+    "vaccineFamily": "Meningococcal B",
+    "manufacturerId": "GSK-002"
+  },
+  {
+    "Id": 13,
+    "vaccineId": "VAX-013",
+    "commercialName": "Vaqta PFS",
+    "genericName": "Hep A",
+    "vaccineFamily": "Hepatitis A",
+    "manufacturerId": "MRK-003"
+  },
+  {
+    "Id": 14,
+    "vaccineId": "VAX-014",
+    "commercialName": "Pentacel SDV",
+    "genericName": "DTaP-IPV-Hib",
+    "vaccineFamily": "DTaP-IPV-Hib",
+    "manufacturerId": "SAN-009"
+  },
+  {
+    "Id": 15,
+    "vaccineId": "VAX-015",
+    "commercialName": "Gardasil PFS",
+    "genericName": "HPV",
+    "vaccineFamily": "HPV",
+    "manufacturerId": "MRK-004"
+  },
+  {
+    "Id": 16,
+    "vaccineId": "VAX-016",
+    "commercialName": "Proquad SDV",
+    "genericName": "MMRV",
+    "vaccineFamily": "MMRV",
+    "manufacturerId": "MRK-005"
+  },
+  {
+    "Id": 17,
+    "vaccineId": "VAX-017",
+    "commercialName": "Rotateq Oral Applicator",
+    "genericName": "RV (Rotavirus)",
+    "vaccineFamily": "Rotavirus",
+    "manufacturerId": "MRK-006"
+  },
+  {
+    "Id": 18,
+    "vaccineId": "VAX-018",
+    "commercialName": "Vaxelis PFS",
+    "genericName": "DTaP-IPV-Hib-Hep B",
+    "vaccineFamily": "DTaP-IPV-Hib-Hep B",
+    "manufacturerId": "MCM-001"
+  },
+  {
+    "Id": 19,
+    "vaccineId": "VAX-019",
+    "commercialName": "Vaxneuvance (PCV15) PFS",
+    "genericName": "PCV15",
+    "vaccineFamily": "Pneumococcal",
+    "manufacturerId": "MRK-007"
   }
 ]
