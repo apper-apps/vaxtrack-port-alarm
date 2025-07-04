@@ -1,245 +1,79 @@
-import { toast } from 'react-toastify'
+import administrationData from '@/services/mockData/administration.json'
 
 class AdministrationService {
-constructor() {
-    this.tableName = 'administration'
-    this.apperClient = null
-  }
-
-  getClient() {
-    if (!this.apperClient) {
-      if (!window.ApperSDK) {
-        throw new Error('Apper SDK not loaded. Please check your network connection and try again.')
-      }
-      const { ApperClient } = window.ApperSDK
-      this.apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      })
-    }
-    return this.apperClient
+  constructor() {
+    this.administrations = [...administrationData]
   }
   
   async getAll() {
-    try {
-      const params = {
-        fields: [
-          { field: { Name: "Name" } },
-          { field: { Name: "administration_id" } },
-          { field: { Name: "administered_doses" } },
-          { field: { Name: "administration_date" } },
-          { field: { Name: "administered_by" } },
-          { 
-            field: { Name: "inventory_id" },
-            referenceField: { field: { Name: "Name" } }
-          }
-        ]
-      }
-      
-      const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return []
-      }
-      
-      return response.data || []
-    } catch (error) {
-      console.error('Error fetching administrations:', error)
-      toast.error('Failed to fetch administrations')
-      return []
-    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([...this.administrations])
+      }, 300)
+    })
   }
   
   async getById(id) {
-    try {
-      const params = {
-        fields: [
-          { field: { Name: "Name" } },
-          { field: { Name: "administration_id" } },
-          { field: { Name: "administered_doses" } },
-          { field: { Name: "administration_date" } },
-          { field: { Name: "administered_by" } },
-          { 
-            field: { Name: "inventory_id" },
-            referenceField: { field: { Name: "Name" } }
-          }
-        ]
-      }
-      
-      const response = await this.apperClient.getRecordById(this.tableName, parseInt(id), params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      return response.data
-    } catch (error) {
-      console.error(`Error fetching administration with ID ${id}:`, error)
-      toast.error('Failed to fetch administration record')
-      return null
-    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const admin = this.administrations.find(a => a.Id === parseInt(id))
+        if (admin) {
+          resolve({ ...admin })
+        } else {
+          reject(new Error('Administration record not found'))
+        }
+      }, 200)
+    })
   }
   
   async create(administrationData) {
-    try {
-      const params = {
-        records: [{
-          Name: administrationData.Name || administrationData.administration_id,
-          administration_id: administrationData.administration_id,
-          administered_doses: administrationData.administered_doses,
-          administration_date: administrationData.administration_date,
-          administered_by: administrationData.administered_by,
-          inventory_id: administrationData.inventory_id
-        }]
-      }
-      
-      const response = await this.apperClient.createRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      if (response.results) {
-        const successfulRecords = response.results.filter(result => result.success)
-        const failedRecords = response.results.filter(result => !result.success)
-        
-        if (failedRecords.length > 0) {
-          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
-          
-          failedRecords.forEach(record => {
-            record.errors?.forEach(error => {
-              toast.error(`${error.fieldLabel}: ${error.message}`)
-            })
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const newAdmin = {
+          ...administrationData,
+          Id: Math.max(...this.administrations.map(a => a.Id)) + 1
         }
-        
-        return successfulRecords.length > 0 ? successfulRecords[0].data : null
-      }
-      
-      return null
-    } catch (error) {
-      console.error('Error creating administration:', error)
-      toast.error('Failed to create administration record')
-      return null
-    }
+        this.administrations.push(newAdmin)
+        resolve({ ...newAdmin })
+      }, 400)
+    })
   }
   
   async update(id, administrationData) {
-    try {
-      const params = {
-        records: [{
-          Id: parseInt(id),
-          Name: administrationData.Name || administrationData.administration_id,
-          administration_id: administrationData.administration_id,
-          administered_doses: administrationData.administered_doses,
-          administration_date: administrationData.administration_date,
-          administered_by: administrationData.administered_by,
-          inventory_id: administrationData.inventory_id
-        }]
-      }
-      
-      const response = await this.apperClient.updateRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      if (response.results) {
-        const successfulUpdates = response.results.filter(result => result.success)
-        const failedUpdates = response.results.filter(result => !result.success)
-        
-        if (failedUpdates.length > 0) {
-          console.error(`Failed to update ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`)
-          
-          failedUpdates.forEach(record => {
-            record.errors?.forEach(error => {
-              toast.error(`${error.fieldLabel}: ${error.message}`)
-            })
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = this.administrations.findIndex(a => a.Id === parseInt(id))
+        if (index !== -1) {
+          this.administrations[index] = { ...this.administrations[index], ...administrationData }
+          resolve({ ...this.administrations[index] })
+        } else {
+          reject(new Error('Administration record not found'))
         }
-        
-        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null
-      }
-      
-      return null
-    } catch (error) {
-      console.error('Error updating administration:', error)
-      toast.error('Failed to update administration record')
-      return null
-    }
+      }, 300)
+    })
   }
   
   async delete(id) {
-    try {
-      const params = {
-        RecordIds: [parseInt(id)]
-      }
-      
-      const response = await this.apperClient.deleteRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return false
-      }
-      
-      if (response.results) {
-        const successfulDeletions = response.results.filter(result => result.success)
-        const failedDeletions = response.results.filter(result => !result.success)
-        
-        if (failedDeletions.length > 0) {
-          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
-          
-          failedDeletions.forEach(record => {
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = this.administrations.findIndex(a => a.Id === parseInt(id))
+        if (index !== -1) {
+          const deletedAdmin = this.administrations.splice(index, 1)[0]
+          resolve({ ...deletedAdmin })
+        } else {
+          reject(new Error('Administration record not found'))
         }
-        
-        return successfulDeletions.length > 0
-      }
-      
-      return false
-    } catch (error) {
-      console.error('Error deleting administration:', error)
-      toast.error('Failed to delete administration record')
-      return false
-    }
+      }, 300)
+    })
   }
   
   async getTotalAdministered() {
-    try {
-      const params = {
-        fields: [
-          { field: { Name: "administered_doses" }, Function: "Sum" }
-        ]
-      }
-      
-      const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        return 0
-      }
-      
-      if (response.data && response.data.length > 0) {
-        return response.data[0].administered_doses || 0
-      }
-      
-      return 0
-    } catch (error) {
-      console.error('Error fetching total administered:', error)
-      return 0
-    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const total = this.administrations.reduce((sum, admin) => sum + admin.administeredDoses, 0)
+        resolve(total)
+      }, 200)
+    })
   }
 }
 

@@ -51,12 +51,12 @@ const Inventory = () => {
     // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(item => {
-const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
+        const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
         const searchFields = [
-vaccine?.commercial_name || '',
-          vaccine?.generic_name || '',
-vaccine?.vaccine_family || '',
-          item.lot_number,
+          vaccine?.commercialName || '',
+          vaccine?.genericName || '',
+          vaccine?.vaccineFamily || '',
+          item.lotNumber,
           item.status
         ].join(' ').toLowerCase()
         
@@ -68,7 +68,7 @@ vaccine?.vaccine_family || '',
     if (statusFilter !== 'all') {
       filtered = filtered.filter(item => {
         const today = new Date()
-const expirationDate = new Date(item.expiration_date)
+        const expirationDate = new Date(item.expirationDate)
         const daysUntilExpiration = Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24))
         
         switch (statusFilter) {
@@ -76,10 +76,10 @@ const expirationDate = new Date(item.expiration_date)
             return daysUntilExpiration <= 30 && daysUntilExpiration > 0
           case 'expired':
             return daysUntilExpiration <= 0
-case 'low-stock':
-            return item.quantity_on_hand <= 20 && item.quantity_on_hand > 0
-case 'good':
-            return daysUntilExpiration > 30 && item.quantity_on_hand > 20
+          case 'low-stock':
+            return item.quantityOnHand <= 20 && item.quantityOnHand > 0
+          case 'good':
+            return daysUntilExpiration > 30 && item.quantityOnHand > 20
           default:
             return true
         }
@@ -91,19 +91,19 @@ case 'good':
       let aValue, bValue
       
       switch (sortField) {
-case 'vaccineName':
-          const aVaccine = vaccines.find(v => v.vaccine_id === a.vaccine_id)
-const bVaccine = vaccines.find(v => v.vaccine_id === b.vaccine_id)
-          aValue = aVaccine?.commercial_name || ''
-          bValue = bVaccine?.commercial_name || ''
+        case 'vaccineName':
+          const aVaccine = vaccines.find(v => v.vaccineId === a.vaccineId)
+          const bVaccine = vaccines.find(v => v.vaccineId === b.vaccineId)
+          aValue = aVaccine?.commercialName || ''
+          bValue = bVaccine?.commercialName || ''
           break
-case 'expirationDate':
-          aValue = new Date(a.expiration_date)
-          bValue = new Date(b.expiration_date)
+        case 'expirationDate':
+          aValue = new Date(a.expirationDate)
+          bValue = new Date(b.expirationDate)
           break
-case 'quantityOnHand':
-          aValue = a.quantity_on_hand
-          bValue = b.quantity_on_hand
+        case 'quantityOnHand':
+          aValue = a.quantityOnHand
+          bValue = b.quantityOnHand
           break
         default:
           aValue = a[sortField] || ''
@@ -120,15 +120,16 @@ case 'quantityOnHand':
     setFilteredInventory(filtered)
   }, [inventory, vaccines, searchTerm, sortField, sortDirection, statusFilter])
   
-const getStatusInfo = (item) => {
+  const getStatusInfo = (item) => {
     const today = new Date()
-    const expirationDate = new Date(item.expiration_date)
+    const expirationDate = new Date(item.expirationDate)
     const daysUntilExpiration = Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24))
+    
     if (daysUntilExpiration <= 0) {
       return { status: 'expired', text: 'Expired' }
     } else if (daysUntilExpiration <= 30) {
       return { status: 'expiring', text: `Expires in ${daysUntilExpiration} days` }
-} else if (item.quantity_on_hand <= 20) {
+    } else if (item.quantityOnHand <= 20) {
       return { status: 'low-stock', text: 'Low Stock' }
     } else {
       return { status: 'good', text: 'Good' }
@@ -257,7 +258,7 @@ const getStatusInfo = (item) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredInventory.map((item, index) => {
-const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
+                  const vaccine = vaccines.find(v => v.vaccineId === item.vaccineId)
                   const statusInfo = getStatusInfo(item)
                   
                   return (
@@ -270,22 +271,22 @@ const vaccine = vaccines.find(v => v.vaccine_id === item.vaccine_id)
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-<div className="text-sm font-medium text-gray-900">
-                            {vaccine?.commercial_name || 'Unknown'}
+                          <div className="text-sm font-medium text-gray-900">
+                            {vaccine?.commercialName || 'Unknown'}
                           </div>
-<div className="text-sm text-gray-500">
-                            {vaccine?.generic_name || 'Unknown'}
+                          <div className="text-sm text-gray-500">
+                            {vaccine?.genericName || 'Unknown'}
                           </div>
                         </div>
                       </td>
-<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.lot_number}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.lotNumber}
                       </td>
-<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(item.expiration_date).toLocaleDateString()}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {new Date(item.expirationDate).toLocaleDateString()}
                       </td>
-<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.quantity_on_hand}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.quantityOnHand}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <StatusBadge status={statusInfo.status}>

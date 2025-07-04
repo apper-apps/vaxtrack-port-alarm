@@ -1,227 +1,70 @@
-import { toast } from 'react-toastify'
+import reconciliationData from '@/services/mockData/reconciliation.json'
 
 class ReconciliationService {
-constructor() {
-    this.tableName = 'reconciliation'
-    this.apperClient = null
-  }
-
-  getClient() {
-    if (!this.apperClient) {
-      if (!window.ApperSDK) {
-        throw new Error('Apper SDK not loaded. Please check your network connection and try again.')
-      }
-      const { ApperClient } = window.ApperSDK
-      this.apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      })
-    }
-    return this.apperClient
+  constructor() {
+    this.reconciliations = [...reconciliationData]
   }
   
   async getAll() {
-    try {
-      const params = {
-        fields: [
-          { field: { Name: "Name" } },
-          { field: { Name: "reconciliation_id" } },
-          { field: { Name: "system_quantity" } },
-          { field: { Name: "physical_quantity" } },
-          { field: { Name: "adjustment_quantity" } },
-          { field: { Name: "reconciliation_date" } },
-          { field: { Name: "performed_by" } },
-          { 
-            field: { Name: "inventory_id" },
-            referenceField: { field: { Name: "Name" } }
-          }
-        ]
-      }
-      
-      const response = await this.apperClient.fetchRecords(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return []
-      }
-      
-      return response.data || []
-    } catch (error) {
-      console.error('Error fetching reconciliations:', error)
-      toast.error('Failed to fetch reconciliations')
-      return []
-    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([...this.reconciliations])
+      }, 300)
+    })
   }
   
   async getById(id) {
-    try {
-      const params = {
-        fields: [
-          { field: { Name: "Name" } },
-          { field: { Name: "reconciliation_id" } },
-          { field: { Name: "system_quantity" } },
-          { field: { Name: "physical_quantity" } },
-          { field: { Name: "adjustment_quantity" } },
-          { field: { Name: "reconciliation_date" } },
-          { field: { Name: "performed_by" } },
-          { 
-            field: { Name: "inventory_id" },
-            referenceField: { field: { Name: "Name" } }
-          }
-        ]
-      }
-      
-      const response = await this.apperClient.getRecordById(this.tableName, parseInt(id), params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      return response.data
-    } catch (error) {
-      console.error(`Error fetching reconciliation with ID ${id}:`, error)
-      toast.error('Failed to fetch reconciliation record')
-      return null
-    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const reconciliation = this.reconciliations.find(r => r.Id === parseInt(id))
+        if (reconciliation) {
+          resolve({ ...reconciliation })
+        } else {
+          reject(new Error('Reconciliation record not found'))
+        }
+      }, 200)
+    })
   }
   
   async create(reconciliationData) {
-    try {
-      const params = {
-        records: [{
-          Name: reconciliationData.Name || reconciliationData.reconciliation_id,
-          reconciliation_id: reconciliationData.reconciliation_id,
-          system_quantity: reconciliationData.system_quantity,
-          physical_quantity: reconciliationData.physical_quantity,
-          adjustment_quantity: reconciliationData.adjustment_quantity,
-          reconciliation_date: reconciliationData.reconciliation_date,
-          performed_by: reconciliationData.performed_by,
-          inventory_id: reconciliationData.inventory_id
-        }]
-      }
-      
-      const response = await this.apperClient.createRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      if (response.results) {
-        const successfulRecords = response.results.filter(result => result.success)
-        const failedRecords = response.results.filter(result => !result.success)
-        
-        if (failedRecords.length > 0) {
-          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
-          
-          failedRecords.forEach(record => {
-            record.errors?.forEach(error => {
-              toast.error(`${error.fieldLabel}: ${error.message}`)
-            })
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const newReconciliation = {
+          ...reconciliationData,
+          Id: Math.max(...this.reconciliations.map(r => r.Id)) + 1
         }
-        
-        return successfulRecords.length > 0 ? successfulRecords[0].data : null
-      }
-      
-      return null
-    } catch (error) {
-      console.error('Error creating reconciliation:', error)
-      toast.error('Failed to create reconciliation record')
-      return null
-    }
+        this.reconciliations.push(newReconciliation)
+        resolve({ ...newReconciliation })
+      }, 400)
+    })
   }
   
   async update(id, reconciliationData) {
-    try {
-      const params = {
-        records: [{
-          Id: parseInt(id),
-          Name: reconciliationData.Name || reconciliationData.reconciliation_id,
-          reconciliation_id: reconciliationData.reconciliation_id,
-          system_quantity: reconciliationData.system_quantity,
-          physical_quantity: reconciliationData.physical_quantity,
-          adjustment_quantity: reconciliationData.adjustment_quantity,
-          reconciliation_date: reconciliationData.reconciliation_date,
-          performed_by: reconciliationData.performed_by,
-          inventory_id: reconciliationData.inventory_id
-        }]
-      }
-      
-      const response = await this.apperClient.updateRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return null
-      }
-      
-      if (response.results) {
-        const successfulUpdates = response.results.filter(result => result.success)
-        const failedUpdates = response.results.filter(result => !result.success)
-        
-        if (failedUpdates.length > 0) {
-          console.error(`Failed to update ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`)
-          
-          failedUpdates.forEach(record => {
-            record.errors?.forEach(error => {
-              toast.error(`${error.fieldLabel}: ${error.message}`)
-            })
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = this.reconciliations.findIndex(r => r.Id === parseInt(id))
+        if (index !== -1) {
+          this.reconciliations[index] = { ...this.reconciliations[index], ...reconciliationData }
+          resolve({ ...this.reconciliations[index] })
+        } else {
+          reject(new Error('Reconciliation record not found'))
         }
-        
-        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null
-      }
-      
-      return null
-    } catch (error) {
-      console.error('Error updating reconciliation:', error)
-      toast.error('Failed to update reconciliation record')
-      return null
-    }
+      }, 300)
+    })
   }
   
   async delete(id) {
-    try {
-      const params = {
-        RecordIds: [parseInt(id)]
-      }
-      
-      const response = await this.apperClient.deleteRecord(this.tableName, params)
-      
-      if (!response.success) {
-        console.error(response.message)
-        toast.error(response.message)
-        return false
-      }
-      
-      if (response.results) {
-        const successfulDeletions = response.results.filter(result => result.success)
-        const failedDeletions = response.results.filter(result => !result.success)
-        
-        if (failedDeletions.length > 0) {
-          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
-          
-          failedDeletions.forEach(record => {
-            if (record.message) toast.error(record.message)
-          })
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = this.reconciliations.findIndex(r => r.Id === parseInt(id))
+        if (index !== -1) {
+          const deletedReconciliation = this.reconciliations.splice(index, 1)[0]
+          resolve({ ...deletedReconciliation })
+        } else {
+          reject(new Error('Reconciliation record not found'))
         }
-        
-        return successfulDeletions.length > 0
-      }
-      
-      return false
-    } catch (error) {
-      console.error('Error deleting reconciliation:', error)
-      toast.error('Failed to delete reconciliation record')
-      return false
-    }
+      }, 300)
+    })
   }
 }
 
