@@ -1,13 +1,23 @@
 import { toast } from 'react-toastify'
 
 class ReconciliationService {
-  constructor() {
-    const { ApperClient } = window.ApperSDK
-    this.apperClient = new ApperClient({
-      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-    })
+constructor() {
     this.tableName = 'reconciliation'
+    this.apperClient = null
+  }
+
+  getClient() {
+    if (!this.apperClient) {
+      if (!window.ApperSDK) {
+        throw new Error('Apper SDK not loaded. Please check your network connection and try again.')
+      }
+      const { ApperClient } = window.ApperSDK
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+    }
+    return this.apperClient
   }
   
   async getAll() {
